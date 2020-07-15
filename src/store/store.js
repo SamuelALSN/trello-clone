@@ -26,6 +26,12 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    /**
+     * @param state
+     * @param tasks
+     * @param name  is the new created task
+     * @ the last 2 params is the payload object
+     */
     CREATE_TASK (state, { tasks, name }) {
       tasks.push({
         name,
@@ -36,6 +42,19 @@ export default new Vuex.Store({
     UPDATE_TASK (state, { task, key, value }) {
       task[key] = value
       // Vue.set(task, key, value)
+    },
+
+    /**
+     * @param state
+     * @param fromTasks is the column (that contains many tasks) from which we will drag the task
+     * @param toTasks  is the column where will be droped the tasks
+     * @param taskIndex  the selected tasks index in the list of tasks
+     * @constructor
+     */
+    MOVE_TASK (state, { fromTasks, toTasks, taskIndex }) {
+      const taskToMove = fromTasks.splice(taskIndex, 1)[0]
+      console.log(taskToMove)
+      toTasks.push(taskToMove)
     }
   }
 })

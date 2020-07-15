@@ -6,6 +6,6 @@ and store them in the local browser storage, This way if we refresh our browser 
 */
 export function saveStatePlugin (store) {
   store.subscribe(
-    (mutation, state) => localStorage.setItem('boards', JSON.stringify(state.boards))
+    (mutation, state) => localStorage.setItem('boards', JSON.stringify(state.board))
   )
 }

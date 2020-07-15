@@ -1,12 +1,27 @@
 <template>
   <div class="board">
     <div class="flex flex-row items-start">
-      <div class="column" v-for="(column, $columnIndex) of board.columns" :key="$columnIndex">
-       <div class="flex items-center mb-2 font-bold">
-         {{ column.name }}
-       </div>
+      <div
+        class="column"
+        v-for="(column, $columnIndex) of board.columns"
+        :key="$columnIndex"
+        @drop="moveTask($event, column.tasks)"
+        @dragover.prevent
+        @dragenter.prevent
+      >
+        <div class="flex items-center mb-2 font-bold">
+          {{ column.name }}
+        </div>
+
         <div class="list-reset">
-          <div class="task" v-for="(task, $taskIndex) of column.tasks" :key="$taskIndex" @click="goToTask(task)">
+          <div
+            class="task"
+            v-for="(task, $taskIndex) of column.tasks"
+            :key="$taskIndex"
+            draggable
+            @dragstart="pickupTask($event,$taskIndex,$columnIndex)"
+            @click="goToTask(task)"
+          >
             <span class="w-full flex-no-shrink font-bold">
               {{ task.name }}
             </span>
@@ -30,6 +45,7 @@
 
 <script>
 import { mapState } from 'vuex'
+
 export default {
   name: 'Board',
   computed: {
@@ -49,6 +65,32 @@ export default {
     },
     close () {
       this.$router.push({ name: 'board' })
+    },
+    /**
+     * @param e : (represent the drag event)
+     * @param taskIndex
+     * @param fromColumnIndex
+     */
+    pickupTask (e, taskIndex, fromColumnIndex) {
+      e.dataTransfer.effectAllowed = 'move'
+      e.dataTransfer.dropEffect = 'move'
+      e.dataTransfer.setData('task-index', taskIndex)
+      e.dataTransfer.setData('from-column-index', fromColumnIndex)
+    },
+
+    /**
+     * @param e
+     * @param toColumn contains a list of tasks
+     */
+    moveTask (e, toTasks) {
+      const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+      const fromTasks = this.board.columns[fromColumnIndex].tasks
+      const taskIndex = e.dataTransfer.getData('task-index')
+      this.$store.commit('MOVE_TASK', {
+        fromTasks,
+        toTasks,
+        taskIndex
+      })
     }
   }
 
@@ -56,21 +98,21 @@ export default {
 </script>
 
 <style lang="css">
-.task {
-  @apply flex items-center flex-wrap shadow mb-2 py-2 px-2 rounded bg-white text-grey-darkest no-underline;
-}
+  .task {
+    @apply flex items-center flex-wrap shadow mb-2 py-2 px-2 rounded bg-white text-grey-darkest no-underline;
+  }
 
-.column {
-  @apply bg-grey-light p-2 mr-4 text-left shadow rounded;
-  min-width: 350px;
-}
+  .column {
+    @apply bg-grey-light p-2 mr-4 text-left shadow rounded;
+    min-width: 350px;
+  }
 
-.board {
-  @apply p-4 bg-teal-dark h-full overflow-auto;
-}
+  .board {
+    @apply p-4 bg-teal-dark h-full overflow-auto;
+  }
 
-.task-bg {
-  @apply pin absolute;
-  background: rgba(0,0,0,0.5);
-}
+  .task-bg {
+    @apply pin absolute;
+    background: rgba(0, 0, 0, 0.5);
+  }
 </style>
