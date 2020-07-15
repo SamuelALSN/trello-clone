@@ -4,7 +4,8 @@
        {{ task.name }}
      </div>
     <textarea
-       class="relative bg-transparent px-2 border"></textarea>
+       class="relative bg-transparent px-2 border mt-2 h-64 border-none leading-normal"
+        :value="task.description"></textarea>
   </div>
 </template>
 
