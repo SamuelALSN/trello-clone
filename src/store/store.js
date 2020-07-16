@@ -5,7 +5,7 @@ import { uuid, saveStatePlugin } from '../utils'
 
 Vue.use(Vuex)
 
-const board = JSON.parse(localStorage.getItem('board')) || defaultBoard
+const board = JSON.parse(localStorage.getItem('boards')) || defaultBoard
 
 export default new Vuex.Store({
   plugins: [saveStatePlugin],
@@ -51,10 +51,21 @@ export default new Vuex.Store({
      * @param taskIndex  the selected tasks index in the list of tasks
      * @constructor
      */
-    MOVE_TASK (state, { fromTasks, toTasks, taskIndex }) {
-      const taskToMove = fromTasks.splice(taskIndex, 1)[0]
+    MOVE_TASK (state, { fromTasks, toTasks, fromTaskIndex, toTaskIndex }) {
+      const taskToMove = fromTasks.splice(fromTaskIndex, 1)[0]
       console.log(taskToMove)
-      toTasks.push(taskToMove)
+      toTasks.splice(toTaskIndex, 0, taskToMove)
+    },
+    /**
+     * @param state
+     * @param fromColumnIndex is the index of the column we want to move
+     * @param toColumnIndex is the index where we want to move our column
+     * @constructor
+     */
+    MOVE_COLUMN (state, { fromColumnIndex, toColumnIndex }) {
+      const columnList = state.board.columns
+      const columnToMove = columnList.splice(fromColumnIndex, 1)
+      columnList.splice(toColumnIndex, 0, columnToMove[0])
     }
   }
 })
