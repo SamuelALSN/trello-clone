@@ -53,7 +53,7 @@ export default new Vuex.Store({
      */
     MOVE_TASK (state, { fromTasks, toTasks, fromTaskIndex, toTaskIndex }) {
       const taskToMove = fromTasks.splice(fromTaskIndex, 1)[0]
-      console.log(taskToMove)
+      console.log(taskToMove, toTaskIndex)
       toTasks.splice(toTaskIndex, 0, taskToMove)
     },
     /**
