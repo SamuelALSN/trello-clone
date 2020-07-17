@@ -25,7 +25,7 @@
             @click="goToTask(task)"
             @dragover.prevent
             @dragenter.prevent
-            @drop.stop="moveTaskOrColumn($event, column.tasks, $taskIndex, $columnIndex)"
+            @drop.stop="moveTaskOrColumn($event, column.tasks,  $columnIndex, $taskIndex,)"
           >
             <span class="w-full flex-no-shrink font-bold">
               {{ task.name }}
@@ -41,6 +41,14 @@
             @keyup.enter="createTask($event, column.tasks)"/>
         </div>
       </div>
+      <div class="column flex">
+        <input
+          type="text"
+          class="p-2 mr-2 flex-grow"
+          v-model="newColumnName"
+          placeholder="New column name "
+         @keyup.enter="createColumn">
+      </div>
     </div>
     <div class="task-bg" v-if="isTaskOpen" @click.self="close">
       <router-view></router-view>
@@ -53,6 +61,11 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'Board',
+  data () {
+    return {
+      newColumnName: ''
+    }
+  },
   computed: {
     ...mapState(['board']),
     isTaskOpen () {
@@ -60,6 +73,12 @@ export default {
     }
   },
   methods: {
+    createColumn () {
+      this.$store.commit('CREATE_COLUMN', {
+        name: this.newColumnName
+      })
+      this.newColumnName = ''
+    },
     createTask (e, tasks) {
       this.$store.commit('CREATE_TASK', { tasks, name: e.target.value })
       // clear input
@@ -116,7 +135,7 @@ export default {
         toColumnIndex
       })
     },
-    moveTaskOrColumn (e, toTasks, toTaskIndex, toColumnIndex) {
+    moveTaskOrColumn (e, toTasks, toColumnIndex, toTaskIndex) {
       const type = e.dataTransfer.getData('type')
       if (type === 'task') {
         this.moveTask(e, toTasks, toTaskIndex !== undefined ? toTaskIndex : toTasks.length)
