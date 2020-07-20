@@ -67,7 +67,7 @@ export default new Vuex.Store({
       const columnToMove = columnList.splice(fromColumnIndex, 1)
       columnList.splice(toColumnIndex, 0, columnToMove[0])
     },
-    CREATE_COLUMN(state, { name }) {
+    CREATE_COLUMN (state, { name }) {
       state.board.columns.push({
         name,
         tasks: []
