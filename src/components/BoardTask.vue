@@ -35,6 +35,10 @@ export default {
     columnIndex: {
       type: Number,
       required: true
+    },
+    board: {
+      type: Object,
+      required: true
     }
   },
   methods: {
@@ -53,6 +57,18 @@ export default {
       e.dataTransfer.setData('from-task-index', taskIndex)
       e.dataTransfer.setData('from-column-index', fromColumnIndex)
       e.dataTransfer.setData('type', 'task')
+    },
+    moveTask (e, toTasks, toTaskIndex) {
+      const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+      const fromTasks = this.board.columns[fromColumnIndex].tasks
+      const fromTaskIndex = e.dataTransfer.getData('from-task-index')
+
+      this.$store.commit('MOVE_TASK', {
+        fromTasks,
+        toTasks,
+        fromTaskIndex,
+        toTaskIndex
+      })
     },
     moveTaskOrColumn (e, toTasks, toColumnIndex, toTaskIndex) {
       const type = e.dataTransfer.getData('type')
